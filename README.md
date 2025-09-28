@@ -110,6 +110,59 @@ A modern real-time group chat application built with Next.js 15, TypeScript, Pri
    - **API Docs**: http://localhost:3000/api-docs (Interactive Swagger UI)
    - **Database Studio**: http://localhost:5555 (run `npm run db:studio`)
 
+## Database Design
+
+### Database Schema
+
+The application uses a comprehensive database schema designed for scalable group communication and collaboration:
+
+![Database Schema](schema-database.svg)
+
+#### Core Entities
+
+**Users & Authentication**
+
+- `User`: Core user profile with authentication data
+- Integrated with Supabase Auth for secure authentication
+
+**Spaces & Groups**
+
+- `Space`: Collaborative workspaces/groups
+- `SpaceMember`: User membership in spaces with roles
+- Supports public/private spaces with member management
+
+**Messaging System**
+
+- `Message`: Real-time messages in spaces
+- `DirectMessage`: Private messages between friends
+- Supports rich text content and attachments
+
+**Social Features**
+
+- `Friend`: Friend connections between users
+- `FriendRequest`: Friend request management system
+- Enables private messaging and social interactions
+
+**Collaborative Notes**
+
+- `Note`: Block-based collaborative notes within spaces
+- Rich content support with real-time editing
+- Organized within spaces for team collaboration
+
+**Notifications**
+
+- `Notification`: Real-time notification system
+- Tracks all user activities and updates
+- Supports read/unread states
+
+#### Key Relationships
+
+- Users can belong to multiple spaces with different roles
+- Each space can have multiple members, messages, and notes
+- Friends can send direct messages to each other
+- All activities generate notifications for relevant users
+- Real-time synchronization across all entities
+
 ## 🗂 API Documentation
 
 ### Interactive Documentation (Local Only)
