@@ -1,0 +1,230 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  avatarUrl String?  @map("avatar_url")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  createdGroups      Group[]         @relation("GroupCreator")
+  memberships        GroupMember[]
+  messages           Message[]
+  createdNotes       Note[]          @relation("NoteCreator")
+  
+  // Friend relationships
+  friendships        Friendship[]    @relation("UserFriendships")
+  friendOf           Friendship[]    @relation("FriendOfUser")
+  sentFriendRequests FriendRequest[] @relation("SentFriendRequests")
+  receivedFriendRequests FriendRequest[] @relation("ReceivedFriendRequests")
+  notifications      Notification[]
+  
+  // Direct Messages
+  sentDirectMessages     DirectMessage[] @relation("SentDirectMessages")
+  receivedDirectMessages DirectMessage[] @relation("ReceivedDirectMessages")
+
+  @@map("users")
+}
+
+model Group {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdBy   String   @map("created_by")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  creator  User          @relation("GroupCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  members  GroupMember[]
+  messages Message[]
+  notes    Note[]
+
+  @@map("groups")
+}
+
+enum MemberRole {
+  ADMIN
+  MEMBER
+}
+
+model GroupMember {
+  id       String     @id @default(cuid())
+  groupId  String     @map("group_id")
+  userId   String     @map("user_id")
+  role     MemberRole @default(MEMBER)
+  joinedAt DateTime   @default(now()) @map("joined_at")
+
+  // Relations
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@map("group_members")
+}
+
+enum MessageType {
+  TEXT
+  FILE
+}
+
+model Message {
+  id          String      @id @default(cuid())
+  groupId     String      @map("group_id")
+  userId      String      @map("user_id")
+  content     String
+  messageType MessageType @default(TEXT) @map("message_type")
+  fileUrl     String?     @map("file_url")
+  createdAt   DateTime    @default(now()) @map("created_at")
+
+  // Relations
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([groupId, createdAt])
+  @@map("messages")
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  groupId   String   @map("group_id")
+  title     String
+  createdBy String   @map("created_by")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  group  Group       @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  creator User       @relation("NoteCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  blocks NoteBlock[]
+
+  @@map("notes")
+}
+
+enum BlockType {
+  PARAGRAPH
+  HEADING
+  LIST
+  DIVIDER
+  CODE
+  QUOTE
+}
+
+model NoteBlock {
+  id        String    @id @default(cuid())
+  noteId    String    @map("note_id")
+  blockType BlockType @map("block_type")
+  content   Json
+  position  Int
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  note Note @relation(fields: [noteId], references: [id], onDelete: Cascade)
+
+  @@index([noteId, position])
+  @@map("note_blocks")
+}
+
+// Friendship model
+model Friendship {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  friendId  String   @map("friend_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user   User @relation("UserFriendships", fields: [userId], references: [id], onDelete: Cascade)
+  friend User @relation("FriendOfUser", fields: [friendId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, friendId])
+  @@map("friendships")
+}
+
+// Friend Request model
+enum FriendRequestStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model FriendRequest {
+  id         String              @id @default(cuid())
+  fromUserId String              @map("from_user_id")
+  toUserId   String              @map("to_user_id")
+  status     FriendRequestStatus @default(PENDING)
+  createdAt  DateTime            @default(now()) @map("created_at")
+  updatedAt  DateTime            @updatedAt @map("updated_at")
+
+  // Relations
+  fromUser User @relation("SentFriendRequests", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser   User @relation("ReceivedFriendRequests", fields: [toUserId], references: [id], onDelete: Cascade)
+
+  @@unique([fromUserId, toUserId])
+  @@map("friend_requests")
+}
+
+// Notification model
+enum NotificationType {
+  FRIEND_REQUEST
+  GROUP_INVITE
+  MESSAGE
+  MENTION
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String           @map("user_id")
+  type      NotificationType
+  title     String
+  message   String
+  relatedId String?          @map("related_id") // ID of related entity (friend request, group, etc.)
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+  @@map("notifications")
+}
+
+// Direct Message model
+enum DirectMessageType {
+  TEXT
+  IMAGE
+  FILE
+}
+
+model DirectMessage {
+  id          String            @id @default(cuid())
+  senderId    String            @map("sender_id")
+  receiverId  String            @map("receiver_id")
+  content     String
+  messageType DirectMessageType @default(TEXT) @map("message_type")
+  fileUrl     String?           @map("file_url")
+  read        Boolean           @default(false)
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  // Relations
+  sender   User @relation("SentDirectMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("ReceivedDirectMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([senderId, receiverId])
+  @@index([receiverId, read])
+  @@map("direct_messages")
+}
