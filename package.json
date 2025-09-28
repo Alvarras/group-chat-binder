@@ -35,7 +35,8 @@
     "swagger-ui-react": "^5.29.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
-    "uuid": "^11.0.3"
+    "uuid": "^11.0.3",
+    "postinstall": "prisma generate"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
