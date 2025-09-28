@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSupabase } from '@/lib/supabase/auth-provider'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { MainLayout } from '@/components/layout/MainLayout'
@@ -12,7 +12,7 @@ import { MessageSquare, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/atoms/Button/Button'
 import { showSuccessToast, showErrorToast } from '@/lib/toast'
 
-export default function DirectMessagesPage() {
+function DirectMessagesContent() {
   const { user } = useSupabase()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -224,5 +224,26 @@ export default function DirectMessagesPage() {
         />
       </ChatLayout>
     </MainLayout>
+  )
+}
+
+function LoadingDirectMessages() {
+  return (
+    <MainLayout>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Loading direct messages...</p>
+        </div>
+      </div>
+    </MainLayout>
+  )
+}
+
+export default function DirectMessagesPage() {
+  return (
+    <Suspense fallback={<LoadingDirectMessages />}>
+      <DirectMessagesContent />
+    </Suspense>
   )
 }
