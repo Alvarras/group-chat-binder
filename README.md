@@ -1,320 +1,428 @@
 # Group Chat Binder
 
-A modern group chat application built with Next.js, TypeScript, Prisma, and Supabase. Features real-time messaging, group management, note-taking, and comprehensive API documentation.
+A modern real-time group chat application built with Next.js 15, TypeScript, Prisma, and Supabase. Features comprehensive messaging, collaborative note-taking, friend system, and interactive API documentation.
 
-## Tech Stack
+## 🌐 Live Demo
 
-- **Frontend**: Next.js 15 with TypeScript, Tailwind CSS
-- **Backend**: Next.js API Routes with TypeScript
+**Production**: [https://group-chat-binder-hasd.vercel.app](https://group-chat-binder-hasd.vercel.app)
+**API Documentation**: [https://group-chat-binder-hasd.vercel.app/api-docs](https://group-chat-binder-hasd.vercel.app/api-docs)
+
+> **Note**: The API documentation on Vercel is view-only. For interactive testing, run the application locally where full Swagger UI functionality is available.
+
+## ✨ Features
+
+### Core Functionality
+
+- **🏠 Spaces (Groups)**: Create and manage collaborative workspaces
+- **💬 Real-time Messaging**: Instant chat with typing indicators
+- **📝 Collaborative Notes**: Block-based note editor with rich content
+- **👥 Friend System**: Send/accept friend requests and manage connections
+- **📱 Direct Messages**: Private messaging between friends
+- **🔔 Real-time Notifications**: Live updates for all activities
+- **👤 Profile Management**: Customizable user profiles with avatars
+
+### Technical Features
+
+- **🔒 Secure Authentication**: Supabase Auth with email verification
+- **📊 Interactive API Docs**: Complete Swagger UI documentation
+- **⚡ Real-time Updates**: Live data synchronization
+- **🎨 Modern UI**: Responsive design with Tailwind CSS
+- **🔍 Smart Search**: Filter and find content easily
+- **📱 Mobile Responsive**: Works perfectly on all devices
+
+## 🛠 Tech Stack
+
+- **Frontend**: Next.js 15, TypeScript, Tailwind CSS, Radix UI
+- **Backend**: Next.js API Routes, TypeScript
 - **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: Supabase Auth
-- **Storage**: Supabase Storage
-- **UI Components**: Radix UI primitives with custom styling
-- **API Documentation**: OpenAPI 3.0 with Swagger UI
-- **Testing**: Jest with comprehensive unit tests
 - **Real-time**: Supabase Realtime subscriptions
+- **Storage**: Supabase Storage (for file uploads)
+- **API Documentation**: OpenAPI 3.0 with Swagger UI
+- **Deployment**: Vercel
 
-## Features
-
-- **Group Management**: Create and manage chat groups
-- **Real-time Messaging**: Send and receive messages instantly
-- **Note Taking**: Create and edit collaborative notes with block-based content
-- **Friend System**: Send/accept friend requests and manage friendships
-- **Direct Messages**: Private messaging between friends
-- **Notifications**: Real-time notifications for various events
-- **Profile Management**: Update user profiles and avatars
-- **API Documentation**: Interactive Swagger UI for all endpoints
-
-## Installation
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js 18.0 or later
-- PostgreSQL database (or Supabase account)
-- Git
+- **Node.js** 18.0 or later
+- **PostgreSQL** database or **Supabase** account (recommended)
+- **Git** for cloning the repository
 
-### Setup Steps
+### Local Development Setup
 
-1. **Clone the repository**
+1. **Clone the Repository**
+
    ```bash
-   git clone https://github.com/Alvarras/gorup-chat-binder.git
-   cd gorup-chat-binder
+   git clone https://github.com/Alvarras/group-chat-binder.git
+   cd group-chat-binder
    ```
 
-2. **Install dependencies**
+2. **Install Dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Environment Configuration**
-   
+
    Create a `.env.local` file in the root directory:
+
    ```bash
-   cp .env.example .env.local
+   # Supabase Configuration (Required)
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+
+   # Database (Required)
+   DATABASE_URL=postgresql://postgres:password@localhost:5432/group_chat_binder
+
+   # NextAuth (Required for production)
+   NEXTAUTH_SECRET=your-nextauth-secret-min-32-characters
+   NEXTAUTH_URL=http://localhost:3000
+
+   # Environment
+   NODE_ENV=development
    ```
 
-4. **Configure Environment Variables**
-   
-   Edit `.env.local` with your configuration:
-   ```bash
-   # Database
-   DATABASE_URL="postgresql://username:password@localhost:5432/gorup_chat_binder"
-   
-   # Supabase Configuration
-   NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
-   NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
-   SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
-   
-   # NextAuth Configuration
-   NEXTAUTH_URL="http://localhost:3000"
-   NEXTAUTH_SECRET="your-secret-key-min-32-characters"
-   
-   # Node Environment
-   NODE_ENV="development"
-   ```
+4. **Database Setup**
 
-5. **Database Setup**
    ```bash
-   # Generate Prisma Client
+   # Generate Prisma client
    npm run db:generate
-   
-   # Apply database migrations
+
+   # Push schema to database
    npm run db:push
-   
-   # Seed database with sample data (optional)
+
+   # Optional: Seed with sample data
    npm run db:seed
    ```
 
-6. **Start Development Server**
+5. **Start Development Server**
+
    ```bash
    npm run dev
    ```
 
-   The application will be available at `http://localhost:3000`
+   **🎉 Access the application:**
 
-## Environment Variables
+   - **App**: http://localhost:3000
+   - **API Docs**: http://localhost:3000/api-docs (Interactive Swagger UI)
+   - **Database Studio**: http://localhost:5555 (run `npm run db:studio`)
 
-### Required Variables
+## 🗂 API Documentation
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@localhost:5432/db` |
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL | `https://abc123.supabase.co` |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous key | `eyJhbGciOiJIUzI1...` |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key | `eyJhbGciOiJIUzI1...` |
-| `NEXTAUTH_URL` | Application URL | `http://localhost:3000` |
-| `NEXTAUTH_SECRET` | NextAuth secret key | `your-32-character-secret` |
+### Interactive Documentation (Local Only)
 
-### Getting Supabase Credentials
+When running locally, access the full interactive Swagger UI at:
 
-1. Create a Supabase project at [supabase.com](https://supabase.com)
-2. Go to Settings > API to find your project URL and keys
-3. Go to Settings > Database to get your connection string
-
-## Usage
-
-### Running the Application
-
-1. **Development Mode**
-   ```bash
-   npm run dev
-   ```
-
-2. **Production Build**
-   ```bash
-   npm run build
-   npm start
-   ```
-
-3. **Database Management**
-   ```bash
-   # View database in browser
-   npm run db:studio
-   
-   # Reset database (careful!)
-   npm run db:reset
-   
-   # Create new migration
-   npm run db:migrate
-   ```
-
-### API Documentation
-
-Access the interactive Swagger API documentation at:
 ```
 http://localhost:3000/api-docs
 ```
 
-The API documentation includes:
-- All 18+ API endpoints with detailed descriptions
-- Request/response schemas and examples
-- Authentication requirements
-- Interactive testing interface
-- Model definitions for all data structures
+**Features available locally:**
 
-### Key API Endpoints
+- ✅ Try out API endpoints directly
+- ✅ Authentication testing
+- ✅ Request/response examples
+- ✅ Schema validation
+- ✅ Real-time API testing
 
-- **Authentication**: `POST /api/auth/create-profile`
-- **Groups**: `GET|POST /api/groups`, `GET /api/groups/{id}`
-- **Messages**: `GET|POST /api/groups/{id}/messages`
-- **Notes**: `GET /api/notes/{id}`, `POST /api/groups/{id}/notes`
-- **Friends**: `GET /api/friends`, `GET|POST /api/friend-requests`
-- **Profile**: `GET|PATCH /api/profile`
-- **Notifications**: `GET|POST /api/notifications`
+### Production Documentation (Read-Only)
 
-## Testing
+View the API specification at:
 
-### Running Tests
+```
+https://group-chat-binder-hasd.vercel.app/api-docs
+```
+
+> **⚠️ Note**: The production API docs are read-only due to CORS and authentication limitations on Vercel. For full testing capabilities, use the local development environment.
+
+### Complete API Endpoints
+
+#### 🔐 Authentication
+
+- `POST /api/auth/signup` - User registration with email verification
+- `POST /api/auth/create-profile` - Create user profile after verification
+- `POST /api/auth/token` - Get authentication token
+- `POST /api/auth/webhook` - Handle Supabase auth webhooks
+- `POST /api/auth/confirm` - Confirm email verification
+
+#### 👤 User Profile
+
+- `GET /api/profile` - Get current user profile
+- `PATCH /api/profile` - Update user profile
+- `GET /api/users/{userId}` - Get user by ID
+
+#### 🏠 Spaces (Groups)
+
+- `GET /api/groups` - List user's groups
+- `POST /api/groups` - Create new group/space
+- `GET /api/groups/{id}` - Get group details
+- `POST /api/groups/{id}/messages` - Send message to group
+- `GET /api/groups/{id}/messages` - Get group messages
+
+#### 📝 Notes
+
+- `GET /api/notes/{id}` - Get note details
+- `PATCH /api/notes/{id}` - Update note content
+- `POST /api/groups/{id}/notes` - Create note in group
+
+#### 👥 Friends & Social
+
+- `GET /api/friends` - Get friends list
+- `POST /api/friend-requests` - Send friend request
+- `GET /api/friend-requests` - Get friend requests (sent/received)
+- `PATCH /api/friend-requests/{id}` - Accept/decline friend request
+- `DELETE /api/friend-requests/{id}` - Cancel friend request
+
+#### 💬 Direct Messages
+
+- `GET /api/direct-messages` - Get DM conversations
+- `POST /api/direct-messages` - Send direct message
+- `GET /api/direct-messages/{userId}` - Get messages with specific user
+
+#### 🔔 Notifications
+
+- `GET /api/notifications` - Get user notifications
+- `PATCH /api/notifications` - Mark notifications as read
+
+### API Authentication
+
+All API endpoints (except auth endpoints) require authentication:
 
 ```bash
-# Run all tests
-npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Run tests with coverage
-npm run test:coverage
-
-# Run tests for CI
-npm run test:ci
+# Include in headers
+Authorization: Bearer YOUR_SUPABASE_ACCESS_TOKEN
+Content-Type: application/json
 ```
 
-### Test Structure
+**Getting Access Token:**
 
-The test suite includes:
-- **Unit Tests**: Comprehensive API endpoint testing
-- **Integration Tests**: Database and authentication flows
-- **Mocking**: Supabase Auth and Prisma client mocking
-- **Coverage**: Detailed code coverage reporting
+1. Sign up via `/api/auth/signup`
+2. Verify email
+3. Use `/api/auth/token` to get access token
+4. Include token in subsequent requests
 
-Tests are located in `__tests__/api/` and cover:
-- Success and failure scenarios
-- Authentication and authorization
-- Input validation
-- Error handling
-- Database operations
+## 🚀 Deployment
 
-## Project Structure
+### Deploy to Vercel (Recommended)
+
+1. **Prepare Repository**
+
+   ```bash
+   git add .
+   git commit -m "Ready for deployment"
+   git push origin main
+   ```
+
+2. **Deploy to Vercel**
+
+   - Go to [vercel.com](https://vercel.com)
+   - Import your GitHub repository
+   - Configure environment variables (see below)
+   - Deploy automatically
+
+3. **Environment Variables for Production**
+
+   Add these in Vercel Dashboard → Project Settings → Environment Variables:
+
+   ```bash
+   # Supabase (Required)
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+
+   # Database (Required)
+   DATABASE_URL=postgresql://postgres:password@your-db-host:5432/database
+
+   # NextAuth (Required)
+   NEXTAUTH_SECRET=your-production-secret-32-chars-minimum
+   NEXTAUTH_URL=https://your-app.vercel.app
+
+   # Environment
+   NODE_ENV=production
+   ```
+
+4. **Database Migration**
+
+   After first deployment, run:
+
+   ```bash
+   npx prisma migrate deploy
+   ```
+
+### Deploy to Other Platforms
+
+#### Railway
+
+1. Connect GitHub repository to Railway
+2. Add environment variables
+3. Deploy automatically
+
+#### DigitalOcean App Platform
+
+1. Create new app from GitHub
+2. Configure build settings: `npm run build`
+3. Add environment variables
+
+#### Docker Deployment
+
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+## 🛠 Development & Contribution
+
+### Project Structure
 
 ```
-├── src/
-│   ├── app/                 # Next.js App Router
-│   │   ├── api/            # API routes
-│   │   ├── api-docs/       # Swagger UI page
-│   │   ├── auth/           # Authentication pages
-│   │   ├── dashboard/      # Main dashboard
-│   │   └── globals.css     # Global styles
-│   ├── components/         # React components
-│   │   ├── ui/            # Base UI components
-│   │   ├── atoms/         # Atomic components
-│   │   ├── molecules/     # Composite components
-│   │   └── organisms/     # Complex components
-│   ├── hooks/             # Custom React hooks
-│   ├── lib/               # Utility libraries
-│   │   ├── prisma.ts      # Database client
-│   │   └── supabase/      # Supabase configuration
-│   └── types/             # TypeScript type definitions
-├── prisma/                # Database schema and migrations
-├── __tests__/             # Test files
-├── swagger.json           # OpenAPI specification
-├── jest.config.js         # Jest configuration
-└── README.md             # This file
+src/
+├── app/                    # Next.js App Router
+│   ├── api/               # API routes
+│   │   ├── auth/          # Authentication endpoints
+│   │   ├── groups/        # Group/space management
+│   │   ├── friends/       # Friend system
+│   │   ├── notes/         # Note management
+│   │   └── notifications/ # Notification system
+│   ├── api-docs/          # Swagger UI page
+│   ├── dashboard/         # Main dashboard
+│   ├── spaces/            # Space pages
+│   ├── auth/              # Auth pages
+│   └── globals.css        # Global styles
+├── components/            # React components
+│   ├── ui/               # Base UI components (Radix UI)
+│   ├── atoms/            # Small reusable components
+│   ├── molecules/        # Composite components
+│   └── organisms/        # Complex page sections
+├── lib/                  # Utility libraries
+│   ├── prisma.ts         # Database client
+│   ├── supabase/         # Supabase configuration
+│   ├── utils.ts          # Helper functions
+│   └── toast.ts          # Notification helpers
+├── hooks/                # Custom React hooks
+├── types/                # TypeScript definitions
+└── middleware.ts         # Next.js middleware
+
+prisma/
+├── schema.prisma         # Database schema
+├── seed.js              # Seed data
+└── migrations/          # Database migrations
+
+public/
+└── swagger.json         # OpenAPI specification
 ```
 
-## Development
+### Available Scripts
 
-### Adding New API Endpoints
-
-1. Create new route file in `src/app/api/`
-2. Update OpenAPI specification in `swagger.json`
-3. Add corresponding tests in `__tests__/api/`
-4. Update database schema in `prisma/schema.prisma` if needed
-
-### Database Changes
-
-1. Modify `prisma/schema.prisma`
-2. Generate Prisma client: `npm run db:generate`
-3. Push changes: `npm run db:push`
-4. Create migration for production: `npm run db:migrate`
-
-### Code Quality
-
-- All code follows TypeScript strict mode
-- ESLint configured for Next.js and React
-- Prettier for consistent formatting
-- Comprehensive test coverage required
-- No comments in production code (clean code principles)
-
-## Deployment
-
-### Vercel (Recommended)
-
-1. Push code to GitHub repository
-2. Connect repository to Vercel
-3. Configure environment variables in Vercel dashboard
-4. Deploy automatically on push
-
-### Environment Variables for Production
-
-Ensure all environment variables are configured in your deployment platform:
-- Database connection string
-- Supabase credentials
-- NextAuth configuration
-- Any additional service keys
-
-### Database Migration
-
-For production deployments:
 ```bash
-npm run db:migrate
+# Development
+npm run dev              # Start dev server with hot reload
+npm run build            # Build for production
+npm run start            # Start production server
+npm run lint             # Run ESLint
+
+# Database
+npm run db:generate      # Generate Prisma client
+npm run db:push          # Push schema to database
+npm run db:migrate       # Create and run migrations
+npm run db:studio        # Open Prisma Studio
+npm run db:seed          # Seed database with sample data
+
+# Utilities
+npm run type-check       # TypeScript type checking
 ```
 
-## Contributing
+### Adding New Features
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/new-feature`
-3. Make changes and add tests
-4. Run tests: `npm test`
-5. Commit changes: `git commit -m "Add new feature"`
-6. Push to branch: `git push origin feature/new-feature`
-7. Create Pull Request
+1. **API Endpoints**
 
-## Troubleshooting
+   - Create route in `src/app/api/`
+   - Add to `swagger.json` specification
+   - Update TypeScript types in `src/types/`
+
+2. **Database Changes**
+
+   - Modify `prisma/schema.prisma`
+   - Run `npm run db:generate`
+   - Create migration with `npm run db:migrate`
+
+3. **UI Components**
+   - Follow atomic design principles
+   - Use Tailwind CSS for styling
+   - Ensure mobile responsiveness
+
+### Code Standards
+
+- **TypeScript**: Strict mode enabled
+- **ESLint**: Next.js configuration
+- **Formatting**: Prettier integration
+- **Components**: Functional components with hooks
+- **State**: React Query for server state, useState for local state
+
+## 🔧 Troubleshooting
 
 ### Common Issues
 
-1. **Database Connection Errors**
-   - Verify `DATABASE_URL` format
-   - Check database server is running
-   - Ensure database exists
+#### Database Connection
 
-2. **Supabase Authentication Issues**
-   - Verify Supabase project is active
-   - Check API keys are correct
-   - Ensure RLS policies are configured
+```bash
+# Error: Connection refused
+# Solution: Check DATABASE_URL and ensure database is running
+npm run db:studio  # Test database connection
+```
 
-3. **Build Failures**
-   - Clear Next.js cache: `rm -rf .next`
-   - Reinstall dependencies: `rm -rf node_modules && npm install`
-   - Generate Prisma client: `npm run db:generate`
+#### Supabase Authentication
 
-4. **Test Failures**
-   - Ensure test database is set up
-   - Check mock configurations
-   - Verify environment variables
+```bash
+# Error: Invalid API key
+# Solution: Verify Supabase credentials in .env.local
+# 1. Check project URL and keys in Supabase dashboard
+# 2. Ensure RLS (Row Level Security) is properly configured
+# 3. Verify service role key has admin privileges
+```
+
+#### Build Errors
+
+```bash
+# Clear Next.js cache
+rm -rf .next
+npm run build
+
+# Regenerate Prisma client
+npm run db:generate
+
+# Reinstall dependencies
+rm -rf node_modules package-lock.json
+npm install
+```
+
+#### API Documentation Issues
+
+- **Local**: Full interactive Swagger UI at http://localhost:3000/api-docs
+- **Production**: Read-only docs due to CORS limitations
+- **Testing**: Use local environment for API testing
+
+### Environment Setup Checklist
+
+- ✅ Node.js 18+ installed
+- ✅ PostgreSQL running or Supabase project created
+- ✅ All environment variables in `.env.local`
+- ✅ Prisma client generated (`npm run db:generate`)
+- ✅ Database schema applied (`npm run db:push`)
+- ✅ Development server running (`npm run dev`)
 
 ### Getting Help
 
-- Check the API documentation at `/api-docs`
-- Review the issues on GitHub
-- Check Supabase and Prisma documentation
-- Ensure all environment variables are set correctly
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-Built with ❤️ using Next.js, TypeScript, Prisma, and Supabase
+1. **Check the logs**: Browser console and terminal output
+2. **Verify environment**: All required variables are set
+3. **Database status**: Ensure database is accessible
+4. **API docs**: Use local Swagger UI for API testing
+5. **GitHub Issues**: Report bugs and request features

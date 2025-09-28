@@ -353,7 +353,7 @@ export default function ChatPage() {
         value={newMessage}
         onChange={setNewMessage}
         onSubmit={handleSendMessage}
-        placeholder={`Message #${group.name.toLowerCase()}...`}
+        placeholder={`Message #${(group?.name || 'group').toLowerCase()}...`}
         disabled={sendingMessage}
         loading={sendingMessage}
       />

@@ -20,20 +20,32 @@ const SwaggerUI = dynamic(() => import('swagger-ui-react'), {
 export default function ApiDocsPage() {
   const [spec, setSpec] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [currentEnv, setCurrentEnv] = useState<string>('')
 
   useEffect(() => {
-    // Suppress React warnings for third-party components
-    const originalConsoleError = console.error
-    console.error = (...args) => {
-      if (
-        typeof args[0] === 'string' &&
-        (args[0].includes('UNSAFE_componentWillReceiveProps') ||
-         args[0].includes('ModelCollapse') ||
-         args[0].includes('OperationContainer'))
-      ) {
-        return
+    // Detect environment
+    const isProduction = window.location.hostname !== 'localhost'
+    setCurrentEnv(isProduction ? 'production' : 'development')
+
+    // Suppress React warnings for third-party components in development
+    if (!isProduction) {
+      const originalConsoleError = console.error
+      console.error = (...args) => {
+        if (
+          typeof args[0] === 'string' &&
+          (args[0].includes('UNSAFE_componentWillReceiveProps') ||
+           args[0].includes('ModelCollapse') ||
+           args[0].includes('OperationContainer'))
+        ) {
+          return
+        }
+        originalConsoleError(...args)
       }
-      originalConsoleError(...args)
+
+      // Cleanup on unmount
+      return () => {
+        console.error = originalConsoleError
+      }
     }
 
     fetch('/swagger.json')
@@ -46,11 +58,6 @@ export default function ApiDocsPage() {
         console.error('Failed to load OpenAPI spec:', error)
         setIsLoading(false)
       })
-
-    // Cleanup
-    return () => {
-      console.error = originalConsoleError
-    }
   }, [])
 
   if (isLoading) {
@@ -77,9 +84,32 @@ export default function ApiDocsPage() {
       <div className="container mx-auto py-8 px-4">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Full API Documentation</h1>
-          <p className="text-gray-600">
-            Complete interactive API documentation with schemas and examples
+          <p className="text-gray-600 mb-4">
+            {currentEnv === 'production' 
+              ? 'Production API documentation (read-only)' 
+              : 'Interactive API documentation with live testing'}
           </p>
+          
+          {/* Environment Info */}
+          <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+            currentEnv === 'production'
+              ? 'bg-green-100 text-green-800' 
+              : 'bg-blue-100 text-blue-800'
+          }`}>
+            <div className={`w-2 h-2 rounded-full mr-2 ${
+              currentEnv === 'production' ? 'bg-green-600' : 'bg-blue-600'
+            }`}></div>
+            {currentEnv.charAt(0).toUpperCase() + currentEnv.slice(1)} Environment
+          </div>
+
+          {currentEnv === 'production' && (
+            <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-sm text-yellow-800">
+                <strong>Note:</strong> API testing is disabled in production due to CORS and authentication limitations.
+                For interactive testing, please run the application locally.
+              </p>
+            </div>
+          )}
         </div>
         
         {/* Custom CSS to improve SwaggerUI appearance */}
@@ -103,16 +133,20 @@ export default function ApiDocsPage() {
           displayRequestDuration={true}
           defaultModelsExpandDepth={2}
           defaultModelExpandDepth={2}
-          tryItOutEnabled={true}
+          tryItOutEnabled={currentEnv !== 'production'}
+          supportedSubmitMethods={currentEnv === 'production' ? [] : ['get', 'post', 'put', 'delete', 'patch']}
           requestInterceptor={(request: any) => {
             // Add any common headers or authentication
+            if (currentEnv !== 'production') {
+              request.headers['Content-Type'] = 'application/json';
+            }
             return request;
           }}
           responseInterceptor={(response: any) => {
             return response;
           }}
           onComplete={(swaggerApi: any) => {
-            console.log("SwaggerUI loaded successfully");
+            console.log(`SwaggerUI loaded successfully in ${currentEnv} mode`);
           }}
           plugins={[]}
           layout="BaseLayout"
@@ -120,8 +154,8 @@ export default function ApiDocsPage() {
           filter={true}
           showExtensions={true}
           showCommonExtensions={true}
-          persistAuthorization={true}
-          withCredentials={true}
+          persistAuthorization={currentEnv !== 'production'}
+          withCredentials={currentEnv !== 'production'}
         />
       </div>
     </div>

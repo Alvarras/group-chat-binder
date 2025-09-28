@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { ProfileEditDialog } from '@/components/ProfileEditDialog'
@@ -46,7 +46,7 @@ interface Group {
     username: string
     avatarUrl?: string
   }
-  _count: {
+  _count?: {
     members: number
     messages: number
   }
@@ -148,25 +148,25 @@ export default function DashboardPage() {
     }
   ]
 
-  // Filter functions
+  // Filter functions with null/undefined checks
   const filteredGroups = groups.filter(group => 
-    group.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    group.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    (group.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+    (group.description?.toLowerCase() || '').includes(searchQuery.toLowerCase())
   )
 
   const filteredDirectMessages = directMessages.filter(dm => 
-    dm.user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    dm.user.email.toLowerCase().includes(searchQuery.toLowerCase())
+    (dm.user?.username?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+    (dm.user?.email?.toLowerCase() || '').includes(searchQuery.toLowerCase())
   )
 
   const filteredFriends = friends.filter(friend => 
-    friend.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    friend.email.toLowerCase().includes(searchQuery.toLowerCase())
+    (friend.username?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+    (friend.email?.toLowerCase() || '').includes(searchQuery.toLowerCase())
   )
 
   const filteredFriendRequests = friendRequests.filter(request => 
-    request.fromUser.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    request.fromUser.email.toLowerCase().includes(searchQuery.toLowerCase())
+    (request.fromUser?.username?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+    (request.fromUser?.email?.toLowerCase() || '').includes(searchQuery.toLowerCase())
   )  // Fetch data from APIs
   useEffect(() => {
     const fetchData = async () => {
@@ -348,7 +348,8 @@ export default function DashboardPage() {
       })
 
       if (response.ok) {
-        const newSpace = await response.json()
+        const result = await response.json()
+        const newSpace = result.group || result // Handle both formats
         setGroups(prev => [newSpace, ...prev])
         setNewSpaceName('')
         setNewSpaceDescription('')
@@ -409,8 +410,8 @@ export default function DashboardPage() {
                     key={group.id}
                     id={group.id}
                     name={group.name}
-                    memberCount={group._count.members}
-                    messageCount={group._count.messages}
+                    memberCount={group._count?.members || 0}
+                    messageCount={group._count?.messages || 0}
                     updatedAt={group.updatedAt}
                     onClick={() => router.push(`/spaces/${group.id}/chat`)}
                   />
@@ -663,6 +664,9 @@ export default function DashboardPage() {
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Create New Space</DialogTitle>
+            <DialogDescription>
+              Create a new space to collaborate with your team. Add a name and description to get started.
+            </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreateSpace} className="space-y-4">
             <div className="space-y-2">
